@@ -36,6 +36,7 @@ public class ChatClientGUI extends JFrame {
         exitButton = new JButton("Exit");
         exitButton.addActionListener(e -> {
             //Add a departure message to the server
+            String name = "";
             String departureMessage = name + "has left the chat.";
             client.sendMessage(departureMessage);
 
