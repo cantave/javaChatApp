@@ -4,11 +4,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class ChatClientGUI extends JFrame {
     private JTextArea messageArea;
     private JTextField textField;
     private ChatClient client;
+    private JButton exitButton;
 
     public ChatClientGUI() {
         super("Chat Application");
@@ -29,10 +32,24 @@ public class ChatClientGUI extends JFrame {
         });
         add(textField, BorderLayout.SOUTH);
 
+        //Initialize the exit button
+        exitButton = new JButton("Exit");
+        exitButton.addActionListener(e -> System.exit(0)); //exit the application
+        JPanel bottomPanel = new JPanel(new BorderLayout());
+        bottomPanel.add(textField, BorderLayout.CENTER);
+        bottomPanel.add(exitButton, BorderLayout.EAST);
+        add(bottomPanel, BorderLayout.SOUTH);
+
         //Initialize and start the ChatClient
         try {
             this.client = new ChatClient("127.0.0.1", 5000, this::onMessageReceived);
             client.startClient();
+            String name = JOptionPane.showInputDialog(this, "Enter your name:", "Name Entry", JOptionPane.PLAIN_MESSAGE);
+            textField.addActionListener(e -> {
+                String message = "[" + new SimpleDateFormat("HH:mm:ss").format(new Date()) + "]" + name + ": " + textField.getText();
+                client.sendMessage(message);
+                textField.setText("");
+            });
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Error connecting to the server", "Connection error",
